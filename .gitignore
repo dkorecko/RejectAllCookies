@@ -1,0 +1,10 @@
+# Build output (regenerate with: npx web-ext build --source-dir=. --overwrite-dest)
+web-ext-artifacts/
+
+# Editor/OS cruft
+.DS_Store
+Thumbs.db
+*.swp
+
+# Node (only used transiently for web-ext/testing tooling)
+node_modules/

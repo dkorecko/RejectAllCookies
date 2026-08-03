@@ -100,3 +100,7 @@ Add an entry to `RAC_CMP_RULES` in `content/rules.js`:
 
 Both `banner` and `reject` are CSS selectors matched via `deepQuery()`, so
 shadow-DOM-hosted markup works without any extra flag.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

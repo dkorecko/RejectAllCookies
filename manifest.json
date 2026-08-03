@@ -3,6 +3,8 @@
   "name": "Reject All Cookies",
   "version": "1.0.0",
   "description": "Automatically clicks 'reject/decline' on cookie consent banners as you browse.",
+  "author": "dkorecko",
+  "homepage_url": "https://github.com/dkorecko/RejectAllCookies",
   "browser_specific_settings": {
     "gecko": {
       "id": "reject-all-cookies@local.extension",
