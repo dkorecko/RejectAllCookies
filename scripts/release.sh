@@ -19,6 +19,11 @@ EOF
   exit 1
 fi
 
+# --approval-timeout=0: submit and return immediately instead of blocking on
+# Mozilla's review queue. Listed add-ons aren't signed until a human reviewer
+# approves them (unlike unlisted), which can take anywhere from under an hour
+# to a couple weeks — far too long to hold a CI job open for. Check review
+# status at https://addons.mozilla.org/developers/addon/reject-all-cookies/versions
 npx web-ext sign \
   --source-dir=. \
   --artifacts-dir=web-ext-artifacts \
@@ -26,4 +31,5 @@ npx web-ext sign \
   --amo-metadata=amo-metadata.json \
   --api-key="$AMO_JWT_ISSUER" \
   --api-secret="$AMO_JWT_SECRET" \
-  --channel=listed
+  --channel=listed \
+  --approval-timeout=0

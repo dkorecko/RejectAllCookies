@@ -116,8 +116,9 @@ shadow-DOM-hosted markup works without any extra flag.
 Listed on [addons.mozilla.org](https://addons.mozilla.org/), so installs
 auto-update once a new version is approved. Releases are handled by
 `.github/workflows/release.yml`: pushing a `vX.Y.Z` tag lints the extension,
-checks the tag matches `manifest.json`'s version, signs and submits it to
-AMO's listed channel, and attaches the signed `.xpi` to a GitHub Release.
+checks the tag matches `manifest.json`'s version, then signs and submits it
+to AMO's listed channel. The git tag itself is the release marker — there's
+no separate GitHub Release object.
 
 There's no separate "create the add-on on the website first" step — since
 `manifest.json` already pins an explicit `id`
@@ -144,9 +145,11 @@ To ship a release:
 1. Bump `"version"` in `manifest.json` and commit it.
 2. `git tag vX.Y.Z && git push origin vX.Y.Z` (must match the manifest
    version exactly, e.g. `v1.1.0` for `"version": "1.1.0"`).
-3. Watch the run under the repo's **Actions** tab. Once it succeeds, the new
-   version sits in Mozilla's review queue; once approved it's published and
-   pushed to existing installs automatically.
+3. Watch the run under the repo's **Actions** tab — it finishes once the
+   submission is accepted. Check the AMO
+   developer dashboard (linked above) for actual review/publish status;
+   once approved it's published and pushed to existing installs
+   automatically.
 
 `scripts/release.sh` (invoked by CI via `npm run release`) also works
 locally if you ever need to sign/submit without going through a tag push —
