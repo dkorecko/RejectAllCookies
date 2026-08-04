@@ -44,6 +44,15 @@ service. The only persisted data is your on/off preference, in
   showing a banner (a red flag for GDPR-compliant CMPs, but it does happen),
   this extension can't retroactively stop that.
 
+## Privacy
+
+This extension collects no data. It makes no network requests and has no
+analytics, telemetry, or remote server of any kind — everything it does
+happens locally in the page you're viewing. The only thing it stores is your
+on/off preference (the global toggle and, optionally, a per-site override
+list), saved locally via the browser's extension storage API. That data never
+leaves your device and is never shared with the developer or anyone else.
+
 ## Installing (development / personal use)
 
 Firefox requires either signing (for permanent installs of unpacked
