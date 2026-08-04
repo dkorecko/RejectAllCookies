@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Reject All Cookies",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically clicks 'reject/decline' on cookie consent banners as you browse.",
   "author": "dkorecko",
   "homepage_url": "https://github.com/dkorecko/RejectAllCookies",
@@ -25,14 +25,15 @@
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
-      "48": "icons/icon.svg",
-      "96": "icons/icon.svg"
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
     },
     "default_title": "Reject All Cookies"
   },
   "icons": {
-    "48": "icons/icon.svg",
-    "96": "icons/icon.svg"
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
   },
   "content_scripts": [
     {
