@@ -1,0 +1,17 @@
+{
+  "name": {
+    "en-US": "Reject All Cookies"
+  },
+  "summary": {
+    "en-US": "Automatically clicks reject/decline on cookie consent banners as you browse, so you don't have to click through them on every site."
+  },
+  "homepage": {
+    "en-US": "https://github.com/dkorecko/RejectAllCookies"
+  },
+  "categories": {
+    "firefox": ["privacy-security"]
+  },
+  "version": {
+    "license": "MIT"
+  }
+}

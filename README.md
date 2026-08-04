@@ -70,7 +70,8 @@ files it references (`popup/popup.html`, `content/*.js`, etc.) — those fail to
 load silently. Instead, build a single packed file and load that:
 
 ```sh
-npx web-ext build --source-dir=. --overwrite-dest
+npm install   # once, to fetch web-ext
+npm run build
 mv web-ext-artifacts/reject_all_cookies-*.zip web-ext-artifacts/reject_all_cookies.xpi
 ```
 
@@ -109,6 +110,47 @@ Add an entry to `RAC_CMP_RULES` in `content/rules.js`:
 
 Both `banner` and `reject` are CSS selectors matched via `deepQuery()`, so
 shadow-DOM-hosted markup works without any extra flag.
+
+## Publishing a new version
+
+Listed on [addons.mozilla.org](https://addons.mozilla.org/), so installs
+auto-update once a new version is approved. Releases are handled by
+`.github/workflows/release.yml`: pushing a `vX.Y.Z` tag lints the extension,
+checks the tag matches `manifest.json`'s version, signs and submits it to
+AMO's listed channel, and attaches the signed `.xpi` to a GitHub Release.
+
+There's no separate "create the add-on on the website first" step — since
+`manifest.json` already pins an explicit `id`
+(`browser_specific_settings.gecko.id`), the first ever tag push creates the
+listing on AMO directly. `amo-metadata.json` supplies the fields AMO
+requires to create a *listed* add-on that the extension package itself
+doesn't carry (summary, category, license) — update it if those should ever
+change.
+
+One-time setup — add the AMO credentials as repo secrets (never paste these
+into chat, a commit, or a CLI arg; `gh secret set` prompts for the value so
+it never touches shell history):
+
+```sh
+gh secret set AMO_JWT_ISSUER
+gh secret set AMO_JWT_SECRET
+```
+
+Get the key/secret pair from
+https://addons.mozilla.org/developers/addon/api/key/.
+
+To ship a release:
+
+1. Bump `"version"` in `manifest.json` and commit it.
+2. `git tag vX.Y.Z && git push origin vX.Y.Z` (must match the manifest
+   version exactly, e.g. `v1.1.0` for `"version": "1.1.0"`).
+3. Watch the run under the repo's **Actions** tab. Once it succeeds, the new
+   version sits in Mozilla's review queue; once approved it's published and
+   pushed to existing installs automatically.
+
+`scripts/release.sh` (invoked by CI via `npm run release`) also works
+locally if you ever need to sign/submit without going through a tag push —
+just export `AMO_JWT_ISSUER`/`AMO_JWT_SECRET` in your shell first.
 
 ## License
 

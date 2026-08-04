@@ -1,0 +1,14 @@
+{
+  "name": "reject-all-cookies",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Firefox extension that automatically rejects cookie consent banners.",
+  "scripts": {
+    "lint": "web-ext lint --source-dir=. --ignore-files package.json package-lock.json amo-metadata.json \"scripts/**\"",
+    "build": "web-ext build --source-dir=. --overwrite-dest --ignore-files package.json package-lock.json amo-metadata.json \"scripts/**\"",
+    "release": "scripts/release.sh"
+  },
+  "devDependencies": {
+    "web-ext": "^10.5.0"
+  }
+}
