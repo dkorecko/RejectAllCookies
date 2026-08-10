@@ -84,4 +84,14 @@ const RAC_CMP_RULES = [
     banner: '#truste-consent-track',
     reject: '#truste-consent-required, .trustarc-reject-all, #trustarc-reject-btn',
   },
+  {
+    // Google's own legacy notice on Google Sites/Blogger-hosted domains
+    // ("This site uses cookies from Google..."). It has no reject choice,
+    // only an acknowledge button (labelled "Got it" or a localized
+    // equivalent) - dismissed via the semantic data-cookie-path attribute
+    // rather than Google's minified class names, which change across builds.
+    name: 'Google Sites/Blogger cookie notice',
+    banner: 'div[data-cookie-path]',
+    reject: 'div[data-cookie-path] [role="button"]',
+  },
 ];
