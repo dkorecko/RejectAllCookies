@@ -1,6 +1,6 @@
 {
   "name": "reject-all-cookies",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Firefox extension that automatically rejects cookie consent banners.",
   "scripts": {
