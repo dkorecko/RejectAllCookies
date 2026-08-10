@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Reject All Cookies",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Automatically clicks 'reject/decline' on cookie consent banners as you browse.",
   "author": "dkorecko",
   "homepage_url": "https://github.com/dkorecko/RejectAllCookies",
