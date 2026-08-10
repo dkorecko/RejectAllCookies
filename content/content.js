@@ -86,8 +86,12 @@
     return bigEnough && (positioned || zIndex > 0);
   }
 
+  // Plain `<a>` is included (not just a[role="button"]) because plenty of CMPs
+  // wire click handlers onto bare links with no button semantics. Safe to cast
+  // this wide because callers only search inside a container that already
+  // passed looksLikeBanner(), not the whole document.
   const CLICKABLE_SELECTOR =
-    'button, a[role="button"], [role="button"], input[type="button"], input[type="submit"]';
+    'button, a, [role="button"], input[type="button"], input[type="submit"]';
 
   function findRejectButtonIn(container) {
     const candidates = [...deepQuery(container, CLICKABLE_SELECTOR)].filter(isVisible);
@@ -100,11 +104,28 @@
     return null;
   }
 
+  // Fallback for banners whose reject control carries no matchable text (icon-only,
+  // or a language the wordlist doesn't cover) but exposes intent through markup,
+  // e.g. Shoptet's `<a data-cc-reject-all>`. Keyed on attribute name/value instead
+  // of a vendor's class names, so it isn't tied to any specific CMP.
+  const REJECT_ATTR_PATTERN = /reject[-_]?all|decline[-_]?all|deny[-_]?all|refuse[-_]?all/i;
+
+  function findRejectButtonByAttribute(container) {
+    for (const el of deepQuery(container, '*')) {
+      if (!isVisible(el)) continue;
+      const attrs = el.attributes ? [...el.attributes] : [];
+      if (attrs.some((a) => REJECT_ATTR_PATTERN.test(a.name) || REJECT_ATTR_PATTERN.test(a.value))) {
+        return el;
+      }
+    }
+    return null;
+  }
+
   function genericScan() {
     for (const el of deepQuery(document, '*')) {
       if (state.handledBanners.has(el)) continue;
       if (!looksLikeBanner(el)) continue;
-      const rejectBtn = findRejectButtonIn(el);
+      const rejectBtn = findRejectButtonIn(el) || findRejectButtonByAttribute(el);
       if (rejectBtn) {
         state.handledBanners.add(el);
         clickElement(rejectBtn);
