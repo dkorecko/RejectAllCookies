@@ -5,6 +5,7 @@
     enabled: true,
     handledBanners: new WeakSet(),
     handledElements: new WeakSet(),
+    settingsOpened: new WeakSet(),
     observer: null,
   };
 
@@ -18,6 +19,8 @@
 
   const REJECT_SORTED = sortByLengthDesc(RAC_REJECT_PHRASES);
   const ACCEPT_SORTED = sortByLengthDesc(RAC_ACCEPT_PHRASES);
+  const SETTINGS_SORTED = sortByLengthDesc(RAC_SETTINGS_PHRASES);
+  const SAVE_SELECTION_SORTED = sortByLengthDesc(RAC_SAVE_SELECTION_PHRASES);
 
   function matchesAny(text, phrases) {
     const t = normalize(text);
@@ -93,15 +96,70 @@
   const CLICKABLE_SELECTOR =
     'button, a, [role="button"], input[type="button"], input[type="submit"]';
 
-  function findRejectButtonIn(container) {
+  function findButtonMatching(container, positivePhrases, negativePhrases) {
     const candidates = [...deepQuery(container, CLICKABLE_SELECTOR)].filter(isVisible);
     for (const el of candidates) {
       const label = el.textContent || el.value || el.getAttribute('aria-label') || '';
-      if (matchesAny(label, REJECT_SORTED) && !matchesAny(label, ACCEPT_SORTED)) {
+      if (matchesAny(label, positivePhrases) && !matchesAny(label, negativePhrases)) {
         return el;
       }
     }
     return null;
+  }
+
+  function findRejectButtonIn(container) {
+    return findButtonMatching(container, REJECT_SORTED, ACCEPT_SORTED);
+  }
+
+  function findSettingsButtonIn(container) {
+    return findButtonMatching(container, SETTINGS_SORTED, [...REJECT_SORTED, ...ACCEPT_SORTED]);
+  }
+
+  function findSaveSelectionButtonIn(container) {
+    return findButtonMatching(container, SAVE_SELECTION_SORTED, []);
+  }
+
+  // Best-effort opt-out for CMPs whose preferences panel defaults some
+  // categories to checked. Toggles (real .click(), not just flipping .checked)
+  // any visible, enabled checkbox/switch that's currently on - disabled ones are
+  // left alone since CMPs consistently use `disabled` to mark the "necessary"
+  // category that can't be turned off anyway.
+  function uncheckOptionalToggles(container) {
+    const toggleSelector = 'input[type="checkbox"], input[type="radio"], [role="switch"], [role="checkbox"]';
+    for (const el of deepQuery(container, toggleSelector)) {
+      if (!isVisible(el) || el.disabled || el.getAttribute('aria-disabled') === 'true') continue;
+      const checked = 'checked' in el ? el.checked : el.getAttribute('aria-checked') === 'true';
+      if (!checked) continue;
+      clickElement(el);
+    }
+  }
+
+  // Fallback for banners with no one-click reject (e.g. only "Accept all" +
+  // "Show details"/"Manage preferences"): open the details panel, decline every
+  // optional category it reveals, then save that selection - functionally
+  // equivalent to reject-all when the CMP offers no direct reject control.
+  function handleSettingsFlow(banner) {
+    const saveBtn = findSaveSelectionButtonIn(banner);
+    if (saveBtn) {
+      uncheckOptionalToggles(banner);
+      state.handledBanners.add(banner);
+      clickElement(saveBtn);
+      reportHandled('generic-settings');
+      return true;
+    }
+
+    if (state.settingsOpened.has(banner)) return false;
+    const settingsBtn = findSettingsButtonIn(banner);
+    if (settingsBtn) {
+      state.settingsOpened.add(banner);
+      clickElement(settingsBtn);
+      // Some panels reveal their contents via a class/attribute toggle rather
+      // than inserting new DOM nodes, which the childList-only MutationObserver
+      // below never sees - force a follow-up scan so the save step still runs.
+      scheduleScan();
+      return true;
+    }
+    return false;
   }
 
   // Fallback for banners whose reject control carries no matchable text (icon-only,
@@ -132,6 +190,8 @@
         reportHandled('generic');
         return true;
       }
+
+      if (handleSettingsFlow(el)) return true;
     }
     return false;
   }

@@ -21,7 +21,11 @@ every iframe (`manifest.json`):
    searches its buttons/links for reject-style text ("Reject all", "Decline",
    "Necessary only", "Ablehnen", "Refuser", "Rechazar", ...) in several
    languages, while explicitly avoiding anything that also reads as an accept
-   button.
+   button. If no direct reject control is found, it falls back to a
+   settings-flow: open a "Manage preferences"/"Show details" panel, decline
+   every optional toggle it reveals, then click the panel's own save/confirm
+   button — the closest equivalent to reject-all on CMPs that only offer
+   "Accept all" plus a customize option on the first screen.
 
 Both layers pierce open shadow DOM (needed for web-component-based widgets
 like Usercentrics) and run inside cross-origin iframes (needed for CMPs like
@@ -36,10 +40,10 @@ service. The only persisted data is your on/off preference, in
 
 - CMP markup changes over time; if a specific site stops being caught, its
   selector in `content/rules.js` likely needs updating (see below).
-- Multi-step "open preferences → then reject" flows (a few TrustArc/Quantcast
-  configurations) aren't chased across screens — only single-click reject
-  controls are handled. The generic fallback often still catches these if a
-  one-click "reject" is present on the first screen.
+- The generic fallback's settings-flow (see above) only goes one screen deep —
+  it opens a single preferences panel and clicks its save/confirm control.
+  Banners that bury preferences behind multiple nested screens aren't chased
+  further.
 - This clicks whatever the site itself renders. If a site sets cookies before
   showing a banner (a red flag for GDPR-compliant CMPs, but it does happen),
   this extension can't retroactively stop that.

@@ -53,6 +53,66 @@ const RAC_ACCEPT_PHRASES = [
   'prijať všetko', 'súhlasím', 'prijať',
 ];
 
+// Buttons that open a detailed preferences/settings panel instead of rejecting
+// directly - used by the settings-flow fallback in content.js for banners with
+// no one-click reject control (e.g. only "Accept all" + "Show details").
+//
+// Deliberately avoids bare generic nouns like "settings"/"details"/"preferences"
+// on their own - a real banner caught in testing (vysajto.sk) also lists
+// third-party attribution links like "Google Ads - podrobnosti tu" ("...details
+// here") inside the same container, and a bare noun matches those too, causing
+// the wrong link to be clicked instead of the actual settings button.
+const RAC_SETTINGS_PHRASES = [
+  // English
+  'manage preferences', 'manage cookies', 'cookie settings', 'privacy settings',
+  'customize', 'customise', 'more options', 'show details', 'show purposes',
+  // German
+  'einstellungen verwalten', 'cookie einstellungen', 'anpassen',
+  // French
+  'gérer les préférences', 'personnaliser',
+  // Spanish
+  'gestionar preferencias', 'configurar', 'personalizar',
+  // Italian
+  'gestisci preferenze', 'personalizza',
+  // Portuguese
+  'gerir preferências', 'gerenciar preferências',
+  // Dutch
+  'voorkeuren beheren', 'aanpassen',
+  // Polish
+  'zarządzaj preferencjami',
+  // Czech
+  'spravovat předvolby',
+  // Slovak
+  'spravovať predvoľby', 'ukázať podrobnosti',
+];
+
+// Buttons that save/confirm only the currently-selected (i.e. still-unchecked-by-
+// -default or manually-deselected) categories from a preferences panel - the
+// closest equivalent to "reject" on CMPs that don't offer a direct reject-all.
+const RAC_SAVE_SELECTION_PHRASES = [
+  // English
+  'save settings', 'save preferences', 'save selection', 'save choices',
+  'confirm choices', 'confirm my choices', 'accept selected', 'allow selected', 'confirm selection',
+  // German
+  'auswahl speichern', 'einstellungen speichern', 'auswahl bestätigen',
+  // French
+  'enregistrer mes choix', 'confirmer mes choix', 'enregistrer la sélection',
+  // Spanish
+  'guardar preferencias', 'guardar selección', 'confirmar selección',
+  // Italian
+  'salva preferenze', 'salva selezione',
+  // Portuguese
+  'guardar preferências', 'guardar seleção',
+  // Dutch
+  'voorkeuren opslaan', 'selectie opslaan',
+  // Polish
+  'zapisz ustawienia', 'zapisz wybór',
+  // Czech
+  'přijmout vybrané', 'uložit nastavení', 'uložit výběr',
+  // Slovak
+  'prijať vybrané', 'uložiť nastavenia', 'uložiť výber', 'potvrdiť výber',
+];
+
 const RAC_BANNER_KEYWORDS = [
   'cookie', 'cookies', 'consent', 'gdpr', 'privacy preferences',
   'datenschutz', 'confidentialité', 'privacidad', 'privacidade', 'privacy',
