@@ -90,14 +90,27 @@
   }
 
   // Plain `<a>` is included (not just a[role="button"]) because plenty of CMPs
-  // wire click handlers onto bare links with no button semantics. Safe to cast
-  // this wide because callers only search inside a container that already
-  // passed looksLikeBanner(), not the whole document.
+  // wire click handlers onto bare links with no button semantics. `[tabindex]`
+  // is included too - frameworks like React Native Web (e.g. abetterrouteplanner.com)
+  // render pressable controls as a bare focusable <div> with no button/role
+  // semantics at all, so isClickableCandidate() below narrows that down further
+  // with a cursor:pointer check. Safe to cast this wide because callers only
+  // search inside a container that already passed looksLikeBanner(), not the
+  // whole document.
   const CLICKABLE_SELECTOR =
-    'button, a, [role="button"], input[type="button"], input[type="submit"]';
+    'button, a, [role="button"], input[type="button"], input[type="submit"], [tabindex]';
+
+  function isClickableCandidate(el) {
+    if (!isVisible(el)) return false;
+    if (el.tagName === 'BUTTON' || el.tagName === 'A' || el.tagName === 'INPUT') return true;
+    if (el.getAttribute('role') === 'button') return true;
+    const tabindex = parseInt(el.getAttribute('tabindex'), 10);
+    if (Number.isNaN(tabindex) || tabindex < 0) return false;
+    return getComputedStyle(el).cursor === 'pointer';
+  }
 
   function findButtonMatching(container, positivePhrases, negativePhrases) {
-    const candidates = [...deepQuery(container, CLICKABLE_SELECTOR)].filter(isVisible);
+    const candidates = [...deepQuery(container, CLICKABLE_SELECTOR)].filter(isClickableCandidate);
     for (const el of candidates) {
       const label = el.textContent || el.value || el.getAttribute('aria-label') || '';
       if (matchesAny(label, positivePhrases) && !matchesAny(label, negativePhrases)) {

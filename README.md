@@ -21,7 +21,11 @@ every iframe (`manifest.json`):
    searches its buttons/links for reject-style text ("Reject all", "Decline",
    "Necessary only", "Ablehnen", "Refuser", "Rechazar", ...) in several
    languages, while explicitly avoiding anything that also reads as an accept
-   button. If no direct reject control is found, it falls back to a
+   button. "Clickable" includes any focusable, pointer-cursor element, not
+   just `<button>`/`<a>`/`[role="button"]` — some frameworks (e.g. React
+   Native Web) render pressable controls as a bare `<div tabindex="0">` with
+   no button semantics at all. If no direct reject control is found, it falls
+   back to a
    settings-flow: open a "Manage preferences"/"Show details" panel, decline
    every optional toggle it reveals, then click the panel's own save/confirm
    button — the closest equivalent to reject-all on CMPs that only offer
