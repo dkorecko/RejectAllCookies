@@ -24,9 +24,10 @@ const RAC_REJECT_PHRASES = [
   // Scandinavian
   'avvis alle', 'afvis alle', 'avvis', 'afvis',
   // Czech
-  'odmítnout vše', 'pouze nezbytné', 'jen nezbytné', 'odmítnout',
+  'odmítnout vše', 'pouze nezbytné', 'jen nezbytné', 'odmítnout', 'odmítám',
   // Slovak
   'odmietnuť všetko', 'iba nevyhnutné', 'len nevyhnutné', 'odmietnuť', 'zamietnuť všetko', 'zamietnuť',
+  'odmietam',
 ];
 
 const RAC_ACCEPT_PHRASES = [
