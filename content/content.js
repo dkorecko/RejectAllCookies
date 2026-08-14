@@ -224,10 +224,24 @@
     debounceTimer = setTimeout(scan, 150);
   }
 
+  // Some CMPs (e.g. Smartweb's own widget on certovskakoliba.sk) pre-render the
+  // banner markup in the initial HTML and reveal it later purely by flipping a
+  // style/class/hidden attribute (fade-in on `window.load`, aria-hidden toggle,
+  // etc.) rather than inserting new DOM nodes - a childList-only observer never
+  // sees that. Watching a small, fixed set of visibility-related attributes
+  // catches those reveals too, without the cost of reacting to every attribute
+  // change on busy pages.
+  const VISIBILITY_ATTRIBUTES = ['class', 'style', 'hidden', 'aria-hidden'];
+
   function startObserving() {
     if (state.observer) return;
     state.observer = new MutationObserver(scheduleScan);
-    state.observer.observe(document.documentElement, { childList: true, subtree: true });
+    state.observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: VISIBILITY_ATTRIBUTES,
+    });
     scheduleScan();
   }
 

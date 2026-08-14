@@ -16,7 +16,10 @@ every iframe (`manifest.json`):
    the most reliable path.
 2. **Generic fallback** (`content/content.js` + `content/wordlist.js`) — for
    every other site, a `MutationObserver` watches for newly-rendered elements
-   that look like a cookie banner (visible, fixed/sticky or high z-index,
+   and for visibility-related attribute changes (`class`, `style`, `hidden`,
+   `aria-hidden` — some CMPs pre-render the banner hidden and reveal it later
+   by flipping one of these instead of inserting new DOM nodes) that look like
+   a cookie banner (visible, fixed/sticky or high z-index,
    mentions "cookie"/"consent"/"gdpr", contains clickable controls), then
    searches its buttons/links for reject-style text ("Reject all", "Decline",
    "Necessary only", "Ablehnen", "Refuser", "Rechazar", ...) in several
