@@ -83,10 +83,22 @@
     if (!RAC_BANNER_KEYWORDS.some((k) => text.includes(k))) return false;
     const style = getComputedStyle(el);
     const rect = el.getBoundingClientRect();
-    const positioned = style.position === 'fixed' || style.position === 'sticky';
     const bigEnough = rect.width > 150 && rect.height > 40;
+    // Overlay-like positioning only. `fixed`/`sticky` are always taken out of
+    // flow, so they qualify on their own; `absolute` needs a positive z-index
+    // alongside it to count as an intentional overlay. `relative` is
+    // deliberately excluded even with a z-index set - it's the standard,
+    // extremely common way to open a stacking context for in-flow content
+    // (e.g. playtracker.net/privacy/'s whole page wrapper is
+    // `position: relative; z-index: 1`), and treating that alone as
+    // "banner-like" caused an ordinary "Go to privacy settings" link on that
+    // page to be misidentified and clicked as a cookie-settings button.
     const zIndex = parseInt(style.zIndex, 10) || 0;
-    return bigEnough && (positioned || zIndex > 0);
+    const isOverlay =
+      style.position === 'fixed' ||
+      style.position === 'sticky' ||
+      (style.position === 'absolute' && zIndex > 0);
+    return bigEnough && isOverlay;
   }
 
   // Plain `<a>` is included (not just a[role="button"]) because plenty of CMPs
